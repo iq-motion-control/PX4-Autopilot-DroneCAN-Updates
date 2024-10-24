@@ -12,6 +12,7 @@
 #include <uavcan/node/timer.hpp>
 #include <uavcan/protocol/node_status_monitor.hpp>
 #include <uavcan/protocol/GetNodeInfo.hpp>
+#include <uORB/topics/dronecan_node_status.h>
 
 namespace uavcan
 {
@@ -99,6 +100,8 @@ private:
     typedef MethodBinder<NodeInfoRetriever*,
                          void (NodeInfoRetriever::*)(const ServiceCallResult<protocol::GetNodeInfo>&)>
             GetNodeInfoResponseCallback;
+
+    uORB::Publication<dronecan_node_status_s> _node_status_pub{ORB_ID(dronecan_node_status)};
 
     struct Entry
     {
