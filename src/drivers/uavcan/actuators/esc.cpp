@@ -74,7 +74,7 @@ UavcanEscController::init()
 	}
 
 	_esc_status_pub.advertise();
-	_extended_status_pub.advertise();  //Make sure people are listening
+	_status_extended_pub.advertise();  //Make sure people are listening
 
 	return res;
 }
@@ -166,27 +166,27 @@ UavcanEscController::esc_status_sub_cb(const uavcan::ReceivedDataStructure<uavca
 
 void
 UavcanEscController::esc_status_extended_sub_cb(const
-		uavcan::ReceivedDataStructure<uavcan::equipment::esc::StatusExtended> &received_extended_status_msg)
+		uavcan::ReceivedDataStructure<uavcan::equipment::esc::StatusExtended> &received_status_extended_msg)
 {
 	//Make sure it's an ESC we can handle
-	if (received_extended_status_msg.esc_index < dronecan_extended_esc_status_s::CONNECTED_ESC_MAX) {
+	if (received_status_extended_msg.esc_index < dronecan_esc_status_extended_s::CONNECTED_ESC_MAX) {
 		//Grab the ESC we're talking about
-		auto &esc_reference = _extended_status.extended_esc_status_data[received_extended_status_msg.esc_index];
+		auto &esc_reference = _status_extended.extended_esc_status_data[received_status_extended_msg.esc_index];
 
 		//Fill in the data
-		esc_reference.input_percent = received_extended_status_msg.input_pct;
-		esc_reference.output_percent = received_extended_status_msg.output_pct;
-		esc_reference.motor_temperature_deg_c = received_extended_status_msg.motor_temperature_degC;
-		esc_reference.motor_angle = received_extended_status_msg.motor_angle;
-		esc_reference.status_flags = received_extended_status_msg.status_flags;
-		esc_reference.esc_index = received_extended_status_msg.esc_index;
+		esc_reference.input_percent = received_status_extended_msg.input_pct;
+		esc_reference.output_percent = received_status_extended_msg.output_pct;
+		esc_reference.motor_temperature_deg_c = received_status_extended_msg.motor_temperature_degC;
+		esc_reference.motor_angle = received_status_extended_msg.motor_angle;
+		esc_reference.status_flags = received_status_extended_msg.status_flags;
+		esc_reference.esc_index = received_status_extended_msg.esc_index;
 		esc_reference.timestamp = hrt_absolute_time();
 
 		//Make sure to update the timestamp of our top level status
-		_extended_status.timestamp = hrt_absolute_time();
+		_status_extended.timestamp = hrt_absolute_time();
 
 		//Put the data into the world
-		_extended_status_pub.publish(_extended_status);
+		_status_extended_pub.publish(_status_extended);
 	}
 }
 

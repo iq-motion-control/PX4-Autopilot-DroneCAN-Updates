@@ -54,7 +54,7 @@
 #include <uORB/topics/esc_status.h>
 #include <drivers/drv_hrt.h>
 #include <lib/mixer_module/mixer_module.hpp>
-#include <uORB/topics/dronecan_extended_esc_status.h>
+#include <uORB/topics/dronecan_esc_status_extended.h>
 
 class UavcanEscController
 {
@@ -92,7 +92,7 @@ private:
 	 * ESC status extended message reception will be reported via this callback.
 	 */
 	void esc_status_extended_sub_cb(const uavcan::ReceivedDataStructure<uavcan::equipment::esc::StatusExtended>
-					&received_extended_status_msg);
+					&received_status_extended_msg);
 
 	/**
 	 * Checks all the ESCs freshness based on timestamp, if an ESC exceeds the timeout then is flagged offline.
@@ -110,11 +110,11 @@ private:
 		void (UavcanEscController::*)(const uavcan::TimerEvent &)> TimerCbBinder;
 
 	esc_status_s	_esc_status{};
-	dronecan_extended_esc_status_s _extended_status{};
+	dronecan_esc_status_extended_s _status_extended{};
 
 
 	uORB::PublicationMulti<esc_status_s> _esc_status_pub{ORB_ID(esc_status)};
-	uORB::Publication<dronecan_extended_esc_status_s> _extended_status_pub{ORB_ID(dronecan_extended_esc_status)};
+	uORB::Publication<dronecan_esc_status_extended_s> _status_extended_pub{ORB_ID(dronecan_esc_status_extended)};
 
 	uint8_t		_rotor_count{0};
 

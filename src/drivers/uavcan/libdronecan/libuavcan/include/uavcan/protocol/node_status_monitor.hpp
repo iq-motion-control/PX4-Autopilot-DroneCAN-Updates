@@ -84,8 +84,8 @@ private:
 
     TimerEventForwarder<TimerCallback> timer_;
 
-    uint8_t _module_id_to_logging_index[dronecan_node_status_s::CONNECTED_ESC_MAX]; //Like with ESC status, we're only going to handle up to 8 Node Statuses in the log
-    uint8_t _module_ids_being_logged = 0;
+    uint8_t _module_id_to_logging_index[dronecan_node_status_s::MAX_NODE_STATUSES_LOGGED]; //Only handle as many node statuses as the DronecanNodeStatus message tells us we can
+    uint8_t _module_ids_being_logged = 0; //Keep track of how many node statuses are in play
 
     struct Entry
     {
@@ -127,8 +127,9 @@ private:
         entry = new_entry_value;
     }
 
-    bool loggingModuleIdNodeStatus(uint8_t reporting_node_id){
-        for(uint8_t array_index = 0; array_index < sizeof(_module_id_to_logging_index); array_index++){
+    bool loggingModuleIdNodeStatus(uint8_t reporting_node_id)
+    {
+        for(uint8_t array_index = 0; array_index < dronecan_node_status_s::MAX_NODE_STATUSES_LOGGED; array_index++){
             if(_module_id_to_logging_index[array_index] == reporting_node_id){
                 return true;
             }
@@ -137,8 +138,9 @@ private:
         return false;
     }
 
-    bool addModuleIdToLoggedStatuses(uint8_t module_id_to_add){
-        if(_module_ids_being_logged < sizeof(_module_id_to_logging_index)){
+    bool addModuleIdToLoggedStatuses(uint8_t module_id_to_add)
+    {
+        if(_module_ids_being_logged < dronecan_node_status_s::MAX_NODE_STATUSES_LOGGED){
             _module_id_to_logging_index[_module_ids_being_logged] = module_id_to_add;
             _module_ids_being_logged++;
 
@@ -148,10 +150,11 @@ private:
         return false;
     }
 
-    uint8_t getModuleIdLogIndex(uint8_t module_id){
+    uint8_t getModuleIdLogIndex(uint8_t module_id)
+    {
         uint8_t return_array_index = 0;
 
-        for(uint8_t array_index = 0; array_index < sizeof(_module_id_to_logging_index); array_index++){
+        for(uint8_t array_index = 0; array_index < dronecan_node_status_s::MAX_NODE_STATUSES_LOGGED; array_index++){
             if(_module_id_to_logging_index[array_index] == module_id){
                 return_array_index = array_index;
                 break;
